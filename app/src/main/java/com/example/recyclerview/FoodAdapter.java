@@ -14,13 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.MyViewHolder> {
+    //for use onItemClickListener from MainActivity
+    private OnItemClickListener listener;
+    int position;
 
     Context context;
-    ArrayList<FoodModel> arrayList;
+    ArrayList<FoodModel> foods;
 
     public FoodAdapter(Context context, ArrayList<FoodModel> arrayList) {
         this.context = context;
-        this.arrayList = arrayList;
+        this.foods = arrayList;
     }
 
     @NonNull
@@ -34,13 +37,13 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.foodName.setText(arrayList.get(position).foodName);
-        holder.foodImage.setImageResource(arrayList.get(position).foodImage);
+        holder.foodName.setText(foods.get(position).foodName);
+        holder.foodImage.setImageResource(foods.get(position).foodImage);
     }
 
     @Override
     public int getItemCount() {
-        return arrayList.size(); //number of items in the list
+        return foods.size(); //number of items in the list
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -51,15 +54,25 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.MyViewHolder> 
             foodName = itemView.findViewById(R.id.foodName);
             foodImage = itemView.findViewById(R.id.foodImage);
 
+            //for use onItemClickListener from MainActivity
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context,"Food Name: "+arrayList.get(getAdapterPosition()).foodName
-                            +"\nPosition: "+getAdapterPosition() +"\nTotal: "+getItemCount(), Toast.LENGTH_LONG).show();
+                    position = getAdapterPosition();
+                    if(listener != null && position != -1) {
+                        listener.onItemClick(foods.get(position));
+                    }
                 }
             });
         }
     }
 
+    //for use onItemClickListener from MainActivity
+    public interface OnItemClickListener {
+        void onItemClick(FoodModel food);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
 }
